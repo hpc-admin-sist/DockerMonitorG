@@ -1,0 +1,41 @@
+site_name: AI集群官方文档
+
+# Repository
+repo_name: 'piaozhx/DockerMonitor'
+repo_url: 'https://github.com/piaozhx/DockerMonitor'
+
+nav:
+  - 首页: index.md
+  - 新手入门: start.md
+  - 集群架构: cluster.md
+  - 基础知识:
+      - '集群管理': 'QA_cluster.md'
+      - 'Linux基础': 'QA_linux.md'
+      - '容器配置': 'QA_container.md'
+      - '注意事项': 'QA_cautions.md'
+  - 使用规范: moral.md
+  - About: about.md
+
+theme:
+  name: material
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - rust
+    - bash
+  palette:
+    primary: 'teal'
+    accent: 'red'
+
+dev_addr: 0.0.0.0:8898
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      #      guess_lang: false
+      linenums: false
+  - toc:
+      permalink: true
+
+extra:
+  version: 1.0

@@ -22,6 +22,8 @@ class CreateHandler(BaseHandler):
         :return:
         """
         cname = self.get_argument('cname')
+        print(f'==== Adding new account for "{cname} ====')
+
         chs_name = self.get_argument('chs_name')
         email = self.get_argument('email')
         advisor = self.get_argument('advisor')
@@ -44,33 +46,34 @@ class CreateHandler(BaseHandler):
         container_port = uid + 21000
         each_user_port_num = 10
         port_range_str = '%d-%d' % (30000 + each_user_port_num * (uid - 1000), 30000 + each_user_port_num * (uid - 1000 + 1) - 1)
-        self.create_user_docker_dir(cname, container_port, port_range_str, advisor)
-        self.db.add_user(cname, container_port, port_range_str, email, chs_name, advisor)
-        self.db.add_user_permission(uid, [0], 'yes', '', '', '')
-        
-        self.send_email_to_new_account(cname, chs_name, email, container_port, port_range_str)
-        self.log += 'E-mail sent.\n'
-        
-        ret_data['code'] = 200
-        ret_data['log'] = self.log
-        self.write(ret_data)
+        if self.create_user_docker_dir(cname, container_port, port_range_str, advisor):
+            self.db.add_user(cname, container_port, port_range_str, email, chs_name, advisor)
+            self.db.add_user_permission(uid, [0], 'yes', '', '', '')
+            
+            self.send_email_to_new_account(cname, chs_name, email, container_port, port_range_str)
+            self.log += 'E-mail sent.\n'
+            
+            ret_data['code'] = 200
+            ret_data['log'] = self.log
+            self.write(ret_data)
 
     def create_user_docker_dir(self, cname, container_port, port_range_str, advisor):
-        self.log += 'Creating user docker dir...\n'
+        
 
         user_dir = '/p300/g_cluster/user_dir/%s' % cname
         if os.path.exists(user_dir):
-            print(user_dir, 'user name exist!')
-            self.log += "User docker dir exists!, please use another user name\n"
+            print(f'!!!! User directory "{user_dir}" exists !!!!')
+            self.log += "User directory exists, please use another user name.\n"
             return False
         else:
+            print(f'---- Creating user directory for "{cname}"" ----')
+            self.log += 'Creating user docker dir...\n'
+
             ## ubuntu18.04-cudnn8-cuda10.2
             baseline_root_path = '/p300/g_cluster/user_dir/baseline-ubuntu18.04-nvidia'  
             prepare_root_path = '/p300/g_cluster/user_dir/prepared_baseline-ubuntu18.04-nvidia'
-
             prepare_dirname_list = sorted(os.listdir(prepare_root_path))
-
-            print('Creating user docker dir...')
+            
             if len(prepare_dirname_list) == 0:
                 os.system("cp -r %s %s" % (baseline_root_path, user_dir))
             else:
@@ -79,23 +82,20 @@ class CreateHandler(BaseHandler):
                 os.system("mv %s %s" % (prepare_dir, user_dir))
 
             # build ssh-key
-            os.system('''cat /dev/zero | ssh-keygen -q -N "" -f /p300/g_cluster/user_dir/%s/root/.ssh/id_rsa''' % cname)
+            # os.system('''cat /dev/zero | ssh-keygen -q -N "" -f /p300/g_cluster/user_dir/%s/root/.ssh/id_rsa''' % cname)
+            os.system(f'ssh-keygen -q -N "" -f /p300/g_cluster/user_dir/{cname}/root/.ssh/id_rsa')
             os.system("cat /p300/g_cluster/user_dir/%s/root/.ssh/id_rsa.pub >> /p300/g_cluster/user_dir/%s/root/.ssh/authorized_keys" % (cname, cname))
             os.system('sed -i "s/user_port/%d/g" /p300/g_cluster/user_dir/%s/root/.ssh/config' % (container_port, cname))
             # os.system('sed -i "s/user_port_range/%s/g" /public/docker/%s/etc/motd' % (port_range_str, cname))
-            print('Done.')
-            self.log += "user docker dir has been created successfully!\n"
 
-            print('Creating user login container...')
-            self.log += 'Creating user login container...\n'
+            print('---- Creating user login container... ----')
+            self.log += 'Creating user login container...'
 
-            self.create_container_on_remote('login', 'docker', cname, container_port, advisor)
+            self.create_container_on_remote('login', 'docker', cname, container_port, advisor, run=True)
 
-            print('Done.')
             self.log += 'Success!\n'
-
-            print('Please login by "ssh root@%s -p %d"\ndefault passwd: sist' % (self.get_website_ip(), container_port))
             self.log += 'Please login by "ssh root@%s -p %d"\ndefault passwd: sist\n' % (self.get_website_ip(), container_port)
+            print('Please login by "ssh root@%s -p %d"\ndefault passwd: sist' % (self.get_website_ip(), container_port))
             
             return True
 

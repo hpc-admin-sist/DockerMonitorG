@@ -85,6 +85,7 @@ class PermissionHandler(BaseHandler):
                 end_date = datetime.datetime.strptime(end_date, '%m/%d/%Y').strftime('%Y-%m-%d') + ' 23:59:59'
 
         self.add_user_container(uid, node_list)
+        self.run_user_container(uid, node_list)
         self.db.add_user_permission(uid, node_list, longtime, start_date, end_date, reason)
 
         ret['code'] = 200
@@ -95,15 +96,46 @@ class PermissionHandler(BaseHandler):
         self.log = ''
         uid, cname, container_port, open_port_range, advisor = self.db.get_user_info_by_uid(uid)
 
+        rm_args_list = []
+        add_args_list = []
+
         for node_id in node_list:
             docker_type = 'docker' if node_id == 0 else 'nvidia-docker'
-            node_name = 'login' if node_id == 0 else 'g%.2d' % node_id
+            node_name = 'login' if node_id == 0 else 'g%02d' % node_id
 
-            self.rm_container_on_remote(node_name, cname)
-            self.create_container_on_remote(node_name, docker_type, cname, container_port, advisor)
+            rm_args_list.append((node_name, cname))
+            add_args_list.append((node_name, docker_type, cname, container_port, advisor))
 
-        print('create', cname, 'done!', 'port: ', container_port)
-        self.log += 'Create %s done! port: %d\n' % (cname, container_port)
-        print('add nodes permission successfully')
-        self.log += 'add nodes permission on %s successfully\n' % str(node_list)
-        
+        print(f'---- Stopping and removing old permission of "{cname}": {node_list} ----')
+        p = Pool(len(node_list))
+        r_list = p.starmap(self.rm_container_on_remote, rm_args_list)
+        p.close()
+        if all(r_list):
+            self.log += f'Removed: {str([node_list[i] for i, e in enumerate(r_list) if e == True])}\n'
+        else:
+            self.log += f'Fail to remove: {str([node_list[i] for i, e in enumerate(r_list) if e != True])}\n'
+
+        print(f'---- Adding permission of "{cname}": {node_list} ----')
+        p = Pool(len(node_list))
+        r_list = p.starmap(self.create_container_on_remote, add_args_list)
+        p.close()
+        if all(r_list):
+            self.log += f'Created: {str([node_list[i] for i, e in enumerate(r_list) if e == True])}\n'
+        else:
+            self.log += f'Fail to create: {str([node_list[i] for i, e in enumerate(r_list) if e != True])}\n'
+    
+    def run_user_container(self, uid, node_list):
+        uid, cname, container_port, open_port_range, advisor = self.db.get_user_info_by_uid(uid)
+
+        print(f'---- Starting nodes {node_list} for user "{cname}"" ----')
+        r_list = []
+        for node_id in node_list:
+            docker_type = 'docker' if node_id == 0 else 'nvidia-docker'
+            node_name = 'login' if node_id == 0 else 'g%02d' % node_id
+
+            r = self.start_container_on_remote(node_name, docker_type, cname, container_port, advisor)
+            r_list.append(r)
+        if all(r_list):
+            self.log += f'Started: {str([node_list[i] for i, e in enumerate(r_list) if e == True])}\n'
+        else:
+            self.log += f'Fail to start: {str([node_list[i] for i, e in enumerate(r_list) if e != True])}\n'

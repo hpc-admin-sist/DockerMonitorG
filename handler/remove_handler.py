@@ -8,11 +8,6 @@ import os
 from multiprocessing import Pool
 
 
-def remove_container_on_remote(node_name, container_name):
-    os.system('ssh %s "docker stop %s && docker rm %s"' % (node_name, container_name, container_name))
-    print('close', container_name, 'done')
-
-
 class RemoveHandler(BaseHandler):
     def post(self):
         """
@@ -43,15 +38,14 @@ class RemoveHandler(BaseHandler):
             self.write(ret)
             return
 
+        print(f'---- Stopping and removing permission of "{username}" on nodes: {node_list} ----')
         p = Pool(len(node_list))
         args_list = []
 
         for node_id in node_list:
             node_name = 'login' if node_id == 0 else 'g%.2d' % node_id
-            container_name = '%s-%s' % (username, node_name)
-            args_list.append((node_name, container_name))
-
-        p.starmap(remove_container_on_remote, args_list)
+            args_list.append((node_name, username))
+        p.starmap(self.rm_container_on_remote, args_list)
         p.close()
 
         self.db.remove_user_permission(uid, node_list)

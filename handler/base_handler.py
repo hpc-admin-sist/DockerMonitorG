@@ -134,7 +134,7 @@ class BaseHandler(tornado.web.RequestHandler):
         # os.system(cmd)
 
         tic = time.time()
-        r = self.cmd_with_timeout(cmd, timeout=60)
+        r = self.cmd_with_timeout(cmd, timeout=80)
         toc = time.time()
         if r is not None:
             print('%s started in %.2f s.' % (container_name, toc-tic))

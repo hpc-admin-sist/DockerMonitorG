@@ -12,6 +12,11 @@
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="static/js/bootstrap.min.js"></script>
 
+    <style type="text/css">
+        .btn {
+            margin-top: 2px;
+        }
+    </style>
 </head>
 <body>
 
@@ -35,6 +40,9 @@
             </li>
             <li>
                 <a href="http://10.15.89.41:8898" target="_blank">Doc</a>
+            </li>
+            <li>
+                <a href="https://github.com/hpc-admin-sist/DockerMonitorG/issues" target="_blank">Contact Us</a>
             </li>
             <li>
                 <a href="/gpu">G Status</a>
@@ -112,18 +120,18 @@
         <td>
             {%for node_info in user['permission']%}
             {% if node_info['name'] == 'admin' %}
-            <button type="button" class="btn btn-danger btn-xs" data-toggle="tooltip"
-                    title="long time"> {%raw node_info['name']%}
+            <button type="button" class="btn btn-success btn-xs" data-toggle="tooltip"
+                    title=""> login
             </button>
             {% elif node_info['longtime'] == 1 %}
             <!--style="background-color: #999999; border-color: #999999"-->
-            <button type="button" class="btn btn-success btn-xs" data-toggle="tooltip"
-                    title="long time">{%raw node_info['name']%}
+            <button type="button" class="btn btn-basic btn-xs" data-toggle="tooltip"
+                    title="">{%raw node_info['name'][4:]%}
             </button>
             {% else %}
-            <button type="button" class="btn btn-warning btn-xs" data-toggle="tooltip" data-html="true"
+            <button type="button" class="btn btn-default btn-xs" data-toggle="tooltip" data-html="true"
                     title="{% raw 'from %s <br/>to %s <br/> reason: %s'%(node_info['start_date'], node_info['end_date'], node_info['reason']) %}">
-                {%raw node_info['name']%}
+                    {%raw node_info['name'][4:]%}
             </button>
             {% end %}
             {% end %}

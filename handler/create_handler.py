@@ -136,6 +136,9 @@ class CreateHandler(BaseHandler):
     GPU监控网页：http://10.15.89.43/gpu
     计算节点权限：http://10.15.89.43/permission
 
+    特别注意：集群为公有资源，每个用户的正常使用量为1-2个节点，请勿长时间占用大量计算资源。
+    禁止使用占卡、抢卡脚本，违者将被直接删除权限。
+
 高性能集群管理员
 {datetime.today().strftime("%b %d, %Y")}
 '''

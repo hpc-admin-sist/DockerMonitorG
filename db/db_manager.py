@@ -32,128 +32,37 @@ class DatabaseManager:
         user_info_list = []
         for user_base in user_base_list:
 
-            if 'cs280' not in user_base[1]:
-                user_info = {'uid': user_base[0],
-                             'username': user_base[1],
-                             'chinese_name': user_base[2],
-                             'email': user_base[3],
-                             'container_port': user_base[4],
-                             'open_port_range': user_base[5],
-                             'advisor': user_base[6],
-                             'permission': []
-                             }
+            user_info = {'uid': user_base[0],
+                            'username': user_base[1],
+                            'chinese_name': user_base[2],
+                            'email': user_base[3],
+                            'container_port': user_base[4],
+                            'open_port_range': user_base[5],
+                            'advisor': user_base[6],
+                            'permission': []
+                            }
 
-                # query user permission
-                cursor.execute(
-                    "select node_id,longtime,start_date,end_date, reason from docker.permission where uid = %s" % user_info[
-                        'uid'])
-                user_permission_list = cursor.fetchall()
+            # query user permission
+            cursor.execute(
+                "select node_id,longtime,start_date,end_date, reason from docker.permission where uid = %s" % user_info[
+                    'uid'])
+            user_permission_list = cursor.fetchall()
 
-                for user_permission in user_permission_list:
-                    node_id, longtime, start_date, end_date, reason = user_permission
-                    if longtime == 0:
-                        start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
-                        end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
+            for user_permission in user_permission_list:
+                node_id, longtime, start_date, end_date, reason = user_permission
+                if longtime == 0:
+                    start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
+                    end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
 
-                    node_info = {'name': 'admin' if node_id == 0 else 'node%.2d' % node_id,
-                                 'longtime': longtime,
-                                 'start_date': start_date,
-                                 'end_date': end_date,
-                                 'reason': reason
-                                 }
-                    user_info['permission'].append(node_info)
+                node_info = {'name': 'admin' if node_id == 0 else 'node%.2d' % node_id,
+                                'longtime': longtime,
+                                'start_date': start_date,
+                                'end_date': end_date,
+                                'reason': reason
+                                }
+                user_info['permission'].append(node_info)
 
-                user_info_list.append(user_info)
-
-        self.commit()
-        return user_info_list
-
-    def get_cs280_user_info(self):
-        cursor = self.get_cursor()
-        cursor.execute(
-            "select uid, username,chinese_name,email, container_port, open_port_range,advisor from docker.user")
-        user_base_list = cursor.fetchall()
-
-        user_info_list = []
-        for user_base in user_base_list:
-
-            if 'cs280' in user_base[1]:
-                user_info = {'uid': user_base[0],
-                             'username': user_base[1],
-                             'chinese_name': user_base[2],
-                             'email': user_base[3],
-                             'container_port': user_base[4],
-                             'open_port_range': user_base[5],
-                             'advisor': user_base[6],
-                             'permission': []
-                             }
-
-                # query user permission
-                cursor.execute(
-                    "select node_id,longtime,start_date,end_date, reason from docker.permission where uid = %s" % user_info[
-                        'uid'])
-                user_permission_list = cursor.fetchall()
-
-                for user_permission in user_permission_list:
-                    node_id, longtime, start_date, end_date, reason = user_permission
-                    if longtime == 0:
-                        start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
-                        end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
-
-                    node_info = {'name': 'admin' if node_id == 0 else 'node%.2d' % node_id,
-                                 'longtime': longtime,
-                                 'start_date': start_date,
-                                 'end_date': end_date,
-                                 'reason': reason
-                                 }
-                    user_info['permission'].append(node_info)
-
-                user_info_list.append(user_info)
-
-        self.commit()
-        return user_info_list
-
-    def get_aff_user_info(self):
-        cursor = self.get_cursor()
-        cursor.execute(
-            "select uid, username,chinese_name,email, container_port, open_port_range,advisor from docker.user")
-        user_base_list = cursor.fetchall()
-
-        user_info_list = []
-        for user_base in user_base_list:
-
-            if 'AI for Faculty' in user_base[6]:
-                user_info = {'uid': user_base[0],
-                             'username': user_base[1],
-                             'chinese_name': user_base[2],
-                             'email': user_base[3],
-                             'container_port': user_base[4],
-                             'open_port_range': user_base[5],
-                             'advisor': user_base[6],
-                             'permission': []
-                             }
-
-                # query user permission
-                cursor.execute(
-                    "select node_id,longtime,start_date,end_date, reason from docker.permission where uid = %s" % user_info[
-                        'uid'])
-                user_permission_list = cursor.fetchall()
-
-                for user_permission in user_permission_list:
-                    node_id, longtime, start_date, end_date, reason = user_permission
-                    if longtime == 0:
-                        start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
-                        end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
-
-                    node_info = {'name': 'admin' if node_id == 0 else 'node%.2d' % node_id,
-                                 'longtime': longtime,
-                                 'start_date': start_date,
-                                 'end_date': end_date,
-                                 'reason': reason
-                                 }
-                    user_info['permission'].append(node_info)
-
-                user_info_list.append(user_info)
+            user_info_list.append(user_info)
 
         self.commit()
         return user_info_list
@@ -347,117 +256,6 @@ class DatabaseManager:
 
         self.commit()
         return node_msg_list
-
-    def get_p40_node_msg_list(self):
-        cursor = self.get_cursor()
-
-        cursor.execute('''select node_gpu_msg from docker.p40_gpu where node_gpu_msg <> "" ''')
-        node_msg_list = cursor.fetchall()
-        node_msg_list = map(lambda x: json.loads(x[0]), node_msg_list)
-
-        self.commit()
-        return node_msg_list
-
-
-    def get_aff_node_msg_list(self):
-        node_msg_list = self.get_node_msg_list()
-        selected_node = [13,14,25,26]
-
-        return [node_msg_list[node_id - 1] for node_id in selected_node]
-
-    def get_plus_node_msg_list(self):
-        node_msg_list = self.get_node_msg_list()
-        selected_node_plus = [3, 4, 12, 11, 6, 21, 22, 31, 34, 35]
-        public_node = [13, 14, 25, 26, 23, 32, 33, 15, 16]
-        selected_node = selected_node_plus + public_node
-
-        return [node_msg_list[node_id - 1] for node_id in selected_node]
-
-    def get_plus_plus_node_msg_list(self):
-        cursor = self.get_cursor()
-
-        cursor.execute('''select node_gpu_msg from docker.plus_gpu where node_gpu_msg <> "" ''')
-        node_msg_list = cursor.fetchall()
-        node_msg_list = map(lambda x: json.loads(x[0]), node_msg_list)
-
-        self.commit()
-        return node_msg_list
-
-    def get_svip_svip_node_msg_list(self):
-        cursor = self.get_cursor()
-
-        cursor.execute('''select node_gpu_msg from docker.svip_gpu where node_gpu_msg <> "" ''')
-        node_msg_list = cursor.fetchall()
-        node_msg_list = map(lambda x: json.loads(x[0]), node_msg_list)
-
-        self.commit()
-        return node_msg_list
-
-
-    def get_svip_node_msg_list(self):
-        node_msg_list = self.get_node_msg_list()
-        selected_node_svip = [1, 2, 5, 17, 18, 19, 20, 24, 29, 30]
-        public_node = [13, 14, 25, 26, 23, 32, 33, 15, 16]
-        selected_node = selected_node_svip + public_node
-
-        return [node_msg_list[node_id - 1] for node_id in selected_node]
-
-    '''
-    for discuss
-    '''
-
-    def add_question(self, title, content, create_date):
-        cursor = self.get_cursor()
-
-        cursor.execute("INSERT INTO docker.discuss(title, content, create_date) VALUES ('%s', '%s','%s')" % (
-            title, content, create_date))
-        self.commit()
-
-    def add_answer(self, question_id, content, create_date):
-        cursor = self.get_cursor()
-
-        cursor.execute("SELECT max(floor) from docker.answer where question_id= %d" % question_id)
-        max_floor = cursor.fetchone()[0]
-        if max_floor == None:
-            floor = 1
-        else:
-            floor = max_floor + 1
-
-        cursor.execute(
-            "INSERT INTO docker.answer(question_id, floor,content, create_date) VALUES (%d, %d, '%s','%s')" % (
-                question_id, floor, content, create_date))
-        self.commit()
-
-    def get_all_questions(self):
-        cursor = self.get_cursor()
-
-        cursor.execute("select question_id, title, create_date  from docker.discuss")
-        question_list = cursor.fetchall()
-
-        self.commit()
-        return question_list
-
-    def get_all_answer_by_question_id(self, question_id):
-        cursor = self.get_cursor()
-
-        cursor.execute("select title, content, create_date from docker.discuss where question_id = %d" % question_id)
-        title, question_content, create_date = cursor.fetchone()
-
-        cursor.execute("select floor, content, create_date from docker.answer where question_id = %d" % question_id)
-        answer_list = cursor.fetchall()
-
-        self.commit()
-        return title, question_content, create_date, answer_list
-
-    def check_question_exist_in_db(self, question_id):
-        cursor = self.get_cursor()
-
-        cursor.execute("select question_id from docker.discuss where question_id = %d" % question_id)
-        res = cursor.fetchall()
-        res = True if len(res) != 0 else False
-
-        self.commit()
-        return res
 
     def commit(self):
         try:

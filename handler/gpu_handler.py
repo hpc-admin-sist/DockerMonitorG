@@ -10,23 +10,26 @@ import os
 from collections import defaultdict
 
 
+def get_usr_consumption(node_gpu_msg_list):
+    usr_consumpt_dict = defaultdict(int)
+    for node_gpu_msg in node_gpu_msg_list:
+        for gpu_msg in node_gpu_msg['gpus']:
+            users = []
+            for proc in gpu_msg['processes']:
+                usr = proc['username'].split('-')[0]
+                users.append(usr)
+            users = set(users)
+            for usr in users:
+                usr_consumpt_dict[usr] += 1
+    return usr_consumpt_dict
+
 class GpuHandler(BaseHandler):
     def get(self):
         node_id = int(self.get_argument('id', default=-1))
         if node_id == -1:
             # node_gpu_msg_list = self.db.get_node_msg_list_with_chs_name()
             node_gpu_msg_list = self.db.get_node_msg_list()
-
-            usr_consumpt_dict = defaultdict(int)
-            for node_gpu_msg in node_gpu_msg_list:
-                for gpu_msg in node_gpu_msg['gpus']:
-                    users = []
-                    for proc in gpu_msg['processes']:
-                        usr = proc['username'].split('-')[0]
-                        users.append(usr)
-                    users = set(users)
-                    for usr in users:
-                        usr_consumpt_dict[usr] += 1
+            usr_consumpt_dict = get_usr_consumption(node_gpu_msg_list)
 
             self.render('../html/gpu.html', node_gpu_msg_list=node_gpu_msg_list,
                         usr_consumpt_dict=usr_consumpt_dict, cur_user=self.get_current_user())

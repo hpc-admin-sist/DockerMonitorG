@@ -15,6 +15,7 @@ from handler.remove_handler import RemoveHandler
 from handler.user_handler import UserHandler
 from handler.system_handler import SystemHandler
 from handler.login_handler import LoginHandler
+from handler.logout_handler import LogoutHandler
 from handler.index_handler import IndexHandler
 from handler.permission_handler import PermissionHandler
 from handler.gpu_handler import GpuHandler
@@ -29,6 +30,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", IndexHandler),
             (r"/login", LoginHandler),
+            (r"/logout", LogoutHandler),
             (r"/system", SystemHandler),
             (r"/create", CreateHandler),
             (r"/remove", RemoveHandler),

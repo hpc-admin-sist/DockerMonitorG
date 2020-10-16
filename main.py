@@ -49,6 +49,7 @@ class Application(tornado.web.Application):
         )
 
         self.db = DatabaseManager()
+        print('G-Cluster Monitor launched!')
         tornado.web.Application.__init__(self, handlers, **settings)
 
 

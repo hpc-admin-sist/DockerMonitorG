@@ -15,13 +15,14 @@ import time
 
 from handler.base_handler import STANDARD_NODE_LIST
 from config import DB_HOST, DB_NAME, DB_PASSWOED, DB_USERNAME
+from db.db_manager import DatabaseManager
 
 NODE_LIST = STANDARD_NODE_LIST[1:]
-
+db = DatabaseManager()
+cursor = db.get_cursor()
+conn = db.conn
 
 def get_useful_gpu_msg(node_id):
-    conn = pymysql.connect(DB_HOST, DB_USERNAME, DB_PASSWOED, DB_NAME, )
-    cursor = conn.cursor()
     while True:
         tic = time.time()
 
@@ -43,7 +44,9 @@ def get_useful_gpu_msg(node_id):
         except:
             conn.rollback()
             print('rollback')
-        time.sleep(5)
+        min_interval = 5
+        if toc < min_interval:
+            time.sleep(min_interval - toc)
 
 def main():
     p = Pool(len(NODE_LIST))

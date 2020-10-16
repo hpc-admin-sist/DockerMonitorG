@@ -20,7 +20,9 @@ def main():
         row = re.sub('  +', ',', row).split(',')
         if len(row) != 6:
             continue
-        username, node_id = row[-1].split('-')
+        container_name = row[-1].split('-')
+        username = '-'.join(container_name[:-1])
+        node_id = container_name[-1]
         status = row[-2]
         status_list.append({
             'username': username,

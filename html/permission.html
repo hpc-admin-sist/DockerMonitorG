@@ -122,24 +122,30 @@
         </td>
         <td>
             {%for node_info in user['permission']%}
-                {% set is_running = ('Up' in node_info['status']) %}
-                {% if is_running %}
-                {% set active_flag = "" %}
-                {% else %}
-                {% set active_flag = "disabled" %}
+                {% set is_running = ('Up' in str(node_info['status'])) %}
+                {% if not is_running %}
+                    {% set btn_type = "warning" %}
                 {% end %}
-
+                
                 {% if node_info['name'] == 'admin' %}
-                <button type="button" class="btn btn-success btn-xs {%raw active_flag%}" data-toggle="tooltip"
+                    {% if is_running %}
+                        {% set btn_type = "success" %}
+                    {% end %}
+                <button type="button" class="btn btn-{%raw btn_type%} btn-xs" data-toggle="tooltip"
                         title="{%raw node_info['status']%}"> login
                 </button>
                 {% elif node_info['longtime'] == 1 %}
-                <!--style="background-color: #999999; border-color: #999999"-->
-                <button type="button" class="btn btn-basic btn-xs {%raw active_flag%}" data-toggle="tooltip"
+                    {% if is_running %}
+                        {% set btn_type = "basic" %}
+                    {% end %}
+                <button type="button" class="btn btn-{%raw btn_type%} btn-xs" data-toggle="tooltip"
                         title="{%raw node_info['status']%}">{%raw node_info['name'][4:]%}
                 </button>
                 {% else %}
-                <button type="button" class="btn btn-default btn-xs {%raw active_flag%}" data-toggle="tooltip" data-html="true"
+                    {% if is_running %}
+                        {% set btn_type = "default" %}
+                    {% end %}
+                <button type="button" class="btn btn-{%raw btn_type%} btn-xs" data-toggle="tooltip" data-html="true"
                         title="{% raw '%s<br/> from %s <br/>to %s <br/> reason: %s'%(node_info['status'], node_info['start_date'], node_info['end_date'], node_info['reason']) %}">
                         {%raw node_info['name'][4:]%}
                 </button>

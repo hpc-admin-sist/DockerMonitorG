@@ -44,12 +44,12 @@ class DatabaseManager:
 
             # query user permission
             cursor.execute(
-                "select node_id,longtime,start_date,end_date, reason from docker.permission where uid = %s" % user_info[
+                "select node_id,longtime,start_date,end_date, reason, status from docker.permission where uid = %s" % user_info[
                     'uid'])
             user_permission_list = cursor.fetchall()
 
             for user_permission in user_permission_list:
-                node_id, longtime, start_date, end_date, reason = user_permission
+                node_id, longtime, start_date, end_date, reason, status = user_permission
                 if longtime == 0:
                     start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
                     end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
@@ -58,7 +58,8 @@ class DatabaseManager:
                                 'longtime': longtime,
                                 'start_date': start_date,
                                 'end_date': end_date,
-                                'reason': reason
+                                'reason': reason,
+                                'status': status,
                                 }
                 user_info['permission'].append(node_info)
 

@@ -54,7 +54,7 @@ class DatabaseManager:
                     start_date = start_date.strftime('%Y-%m-%d %H:%M:%S')
                     end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
 
-                node_info = {'name': 'admin' if node_id == 0 else 'node%.2d' % node_id,
+                node_info = {'name': 'login' if node_id == 0 else 'g%.2d' % node_id,
                                 'longtime': longtime,
                                 'start_date': start_date,
                                 'end_date': end_date,

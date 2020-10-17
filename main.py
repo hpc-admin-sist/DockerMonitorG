@@ -18,6 +18,7 @@ from handler.login_handler import LoginHandler
 from handler.logout_handler import LogoutHandler
 from handler.index_handler import IndexHandler
 from handler.permission_handler import PermissionHandler
+from handler.restart_handler import RestartHandler
 from handler.gpu_handler import GpuHandler
 
 from db.db_manager import DatabaseManager
@@ -36,6 +37,7 @@ class Application(tornado.web.Application):
             (r"/remove", RemoveHandler),
             (r"/delete", DeleteHandler),
             (r"/permission", PermissionHandler),
+            (r"/restart", RestartHandler),
             (r"/user", UserHandler),
             (r"/gpu", GpuHandler),
         ]

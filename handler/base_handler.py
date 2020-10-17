@@ -145,7 +145,7 @@ class BaseHandler(tornado.web.RequestHandler):
     @classmethod
     def restart_container_on_remote(self, container_name):
         node_name = container_name.split('-')[-1]
-        cname = '-'.join(container_name.split('-')[:-1])
+        username = '-'.join(container_name.split('-')[:-1])
 
         cmd = f"ssh {node_name} docker restart {container_name} &"
         os.system(cmd)

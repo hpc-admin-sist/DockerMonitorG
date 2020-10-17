@@ -12,5 +12,5 @@ tmux send-keys -t  G-ClusterMonitor:0 "cd $BASE; python main.py" C-m
 tmux send-keys -t  G-ClusterMonitor:1 "cd $BASE; python gpu_tools/save_all_nodes_gpu_msg.py" C-m
 tmux send-keys -t  G-ClusterMonitor:2 "cd $BASE; python docker_tools/save_all_nodes_container_status.py" C-m
 
-tmux select-window -t G-ClusterMonitor:1
+tmux select-window -t G-ClusterMonitor:0
 tmux attach-session -t G-ClusterMonitor

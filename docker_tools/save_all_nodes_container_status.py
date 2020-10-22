@@ -60,7 +60,7 @@ def get_node_container_status(node_id):
     
 def main():
     p = Pool(len(NODE_LIST))
-    args_list = [(i,) for i in NODE_LIST[:-1]]
+    args_list = [(i,) for i in NODE_LIST]
     p.starmap(get_node_container_status, args_list)
     p.close()
 

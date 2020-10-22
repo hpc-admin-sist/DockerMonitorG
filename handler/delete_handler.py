@@ -40,17 +40,8 @@ class DeleteHandler(BaseHandler):
         self.close_all_container(username, uid)
 
         print(f'---- Removing user directory of "{username}" ----')
-        offset = 1
-        trash_path = '/p300/g_cluster/user_dir/trash_bin/trash-%d' % offset
-        while os.path.exists(trash_path):
-            offset += 1
-            trash_path = '/p300/g_cluster/user_dir/trash_bin/trash-%d' % offset
-        usr_dir = f'/p300/g_cluster/user_dir/{username}'
-        print(f'mv {usr_dir} {trash_path}')
-        os.system(f'mv {usr_dir} {trash_path}')
-
-        print(f'rm -rf {trash_path} &')
-        os.system(f'rm -rf {trash_path} &')
+        self.mv_to_trash_and_rm(f'/p300/g_cluster/user_dir/{username} ')
+        self.mv_to_trash_and_rm(f'/public/g_cluster/user_dir/{username} ')
 
         # # print('rm -rf /p300/docker/%s' % username)
         # # os.system('rm -rf /p300/docker/%s' % username)
@@ -72,4 +63,20 @@ class DeleteHandler(BaseHandler):
         print('Done')
         p.close()
         self.db.remove_user_permission(uid, STANDARD_NODE_LIST)
+    
+    def mv_to_trash_and_rm(self, path):
+        trash_dir = os.path.join(os.path.dirname(path), 'trash_bin')
+        if not os.path.exists(trash_dir):
+            os.mkdir(trash_dir)
+
+        offset = 1
+        trash_path = os.path.join(trash_dir, 'trash-%d' % offset)
+        while os.path.exists(trash_path):
+            offset += 1
+            trash_path = os.path.join(trash_dir, 'trash-%d' % offset)
+        print(f'mv {path} {trash_path}')
+        os.system(f'mv {path} {trash_path}')
+
+        print(f'rm -rf {trash_path} &')
+        os.system(f'rm -rf {trash_path} &')
     

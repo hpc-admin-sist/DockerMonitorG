@@ -2,10 +2,10 @@ import time
 import os
 
 if __name__ == "__main__":
-    # baseline_path = '/p300/g_cluster/user_dir/baseline-ubuntu18.04-nvidia/'
-    baseline_dir = '/var/lib/docker/overlay2/3531a2be4e046e593bd70abea318f3b257484f8b743fbb45f138ecf6b47bd8b6/merged/'
-    prepared_baseline_dir = '/p300/g_cluster/user_dir/prepared_baseline-ubuntu18.04-nvidia/'
-    num_copies = 50
+    baseline_dir = '/public/g_cluster/user_dir/baseline-ubuntu18.04-nvidia'
+    # baseline_dir = '/var/lib/docker/overlay2/3531a2be4e046e593bd70abea318f3b257484f8b743fbb45f138ecf6b47bd8b6/merged/'
+    prepared_baseline_dir = '/public/g_cluster/user_dir/prepared_baseline-ubuntu18.04-nvidia/'
+    num_copies = 10
     print('Start making %d copies of: %s' %(num_copies, baseline_dir))
     print('Target directory: %s' % prepared_baseline_dir)
     init_offset = 0
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         # copytree(baseline_path, target_path)
         # os.system('cp -ra %s %s' %(baseline_path, target_path))
         status = os.system(
-            'ssh g01 '
+            # 'ssh g01 '
             'cp -a '
             f'{baseline_dir}/bin '
             f'{baseline_dir}/etc '

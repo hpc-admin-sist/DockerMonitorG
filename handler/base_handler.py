@@ -70,6 +70,7 @@ class BaseHandler(tornado.web.RequestHandler):
               f"-v /p300/g_cluster/user_dir/{cname}/root:/root "
               f"-v /public/g_cluster/user_dir/{cname}/sbin:/sbin "
               f"-v /public/g_cluster/user_dir/{cname}/usr:/usr "
+              f"-v /public/g_cluster/user_dir/{cname}/var:/var "
               # "--privileged=true "
               # "--volume /run/dbus/system_bus_socket:/run/dbus/system_bus_socket:ro "
               # "--restart unless-stopped "

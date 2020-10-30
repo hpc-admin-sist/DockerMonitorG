@@ -121,12 +121,13 @@ class CreateHandler(BaseHandler):
 
     你的G-Cluster新账户已开通。
     
+    
     在开始使用之前，你需要了解一下几点：
     1. G-Cluster的校内IP地址为10.15.89.43，仅能通过校园网接入。
     2. 用户环境的以Docker为基础搭建。
     3. 操作系统为Ubuntu 18.04LTS，预装NVIDIA CUDA 10.2和PyTorch1.6。
     4. 用户对下列路径以外的文件改动不会被保留：/bin /etc /lib /lib64 /opt /sbin /usr /home /root。
-    5. 为便于数据维护，请将数据、代码、模型等用户文件存在/root或/home下。其中，/home文件夹与AI集群同名用户的/p300文件夹共享。
+    5. 为便于数据管理，请将数据、代码、conda环境等用户文件存在/home下。其中，/home文件夹与AI集群同名用户的/p300文件夹共享。
 
     你的账户信息为：
         用户名： {username}

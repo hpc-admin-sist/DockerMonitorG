@@ -50,6 +50,10 @@
             background-color: #7c808d;
         }
 
+        .process.label-danger {
+            background-color: #db5f5f;
+        }
+
         .label .badge {
             background-color: #fff;
             padding: 1px 4px;
@@ -64,7 +68,7 @@
         }
 
         .label-danger .badge {
-            color: #d9534f;
+            color: #db5f5f;
         }
 
         .th-machine {
@@ -262,12 +266,17 @@
                 {% for process in gpu_msg['processes'] %}
                     {%set usr = process['username'].split('-')[0] %}
                     {%set usr_consumpt = usr_consumpt_dict[usr] %}
-                    {% if usr_consumpt <= 16 %}
+                    {% set timeout = ('天' in process['runtime'] and int(process['runtime'].split('天')[0]) > 10) %}
+
+                    {% if usr_consumpt > 16 %}
+                        {% set lable_type = "label-danger" %}
+                        {% set warn_info = "该用户资源占用过多，<br/>程序可能随时被终止。<br/>" %}
+                    {% elif timeout %}
+                        {% set lable_type = "label-warning" %}
+                        {% set warn_info = "进程运行超过10天，即将被终止。<br/>" %}
+                    {% else %}
                         {% set lable_type = "label-primary" %}
                         {% set warn_info = "" %}
-                    {% else %}
-                        {% set lable_type = "label-warning" %}
-                        {% set warn_info = "该用户资源占用过多，<br/>程序可能随时被终止。<br/>" %}
                     {% end %}
                     <span class="hidden-xs process-content">
                         <span class="process label {% raw lable_type %}" data-toggle="tooltip" data-placement="top" data-html="true"

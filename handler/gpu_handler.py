@@ -10,17 +10,26 @@ import os
 from collections import defaultdict
 
 
+def get_gpu_weight(gpu_type):
+    if gpu_type == 'GeForce RTX 2080 Ti':
+        return 1
+    elif gpu_type == 'TITAN RTX':
+        return 2
+    else:
+        return 1
+
 def get_usr_consumption(node_gpu_msg_list):
     usr_consumpt_dict = defaultdict(int)
     for node_gpu_msg in node_gpu_msg_list:
         for gpu_msg in node_gpu_msg['gpus']:
+            gpu_weight = get_gpu_weight(gpu_msg['name'])
             users = []
             for proc in gpu_msg['processes']:
                 usr = proc['username'].split('-')[0]
                 users.append(usr)
             users = set(users)
             for usr in users:
-                usr_consumpt_dict[usr] += 1
+                usr_consumpt_dict[usr] += gpu_weight
     return usr_consumpt_dict
 
 class GpuHandler(BaseHandler):

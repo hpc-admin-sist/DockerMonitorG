@@ -10,19 +10,18 @@ import os
 from collections import defaultdict
 
 
-def get_gpu_weight(gpu_type):
-    if gpu_type == 'GeForce RTX 2080 Ti':
-        return 1
-    elif gpu_type == 'TITAN RTX':
-        return 2
-    else:
-        return 1
+gpu_weight_dict = {
+    'GeForce RTX 2080 Ti': 1,
+    'TITAN RTX': 2,
+}
+gpu_weight_dict = defaultdict(lambda:1, gpu_weight_dict)
+
 
 def get_usr_consumption(node_gpu_msg_list):
     usr_consumpt_dict = defaultdict(int)
     for node_gpu_msg in node_gpu_msg_list:
         for gpu_msg in node_gpu_msg['gpus']:
-            gpu_weight = get_gpu_weight(gpu_msg['name'])
+            gpu_weight = gpu_weight_dict[gpu_msg['name']]
             users = []
             for proc in gpu_msg['processes']:
                 usr = proc['username'].split('-')[0]
@@ -40,8 +39,12 @@ class GpuHandler(BaseHandler):
             node_gpu_msg_list = self.db.get_node_msg_list()
             usr_consumpt_dict = get_usr_consumption(node_gpu_msg_list)
 
-            self.render('../html/gpu.html', node_gpu_msg_list=node_gpu_msg_list,
-                        usr_consumpt_dict=usr_consumpt_dict, cur_user=self.get_current_user())
+            self.render(
+                '../html/gpu.html',
+                node_gpu_msg_list=node_gpu_msg_list,
+                usr_consumpt_dict=usr_consumpt_dict,
+                gpu_weight_dict=gpu_weight_dict,
+                cur_user=self.get_current_user())
         else:
             node_gpu_msg_list = self.db.get_node_msg_list()
             self.write(json.dumps(node_gpu_msg_list))

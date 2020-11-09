@@ -47,11 +47,15 @@
         }
 
         .process.label-warning {
-            background-color: #7c808d;
+            background-color: #9398a8;
         }
 
         .process.label-danger {
-            background-color: #db5f5f;
+            background-color: #d86767;
+        }
+
+        .process.label-primary {
+            background-color: #4b87bb;
         }
 
         .label .badge {
@@ -59,8 +63,14 @@
             padding: 1px 4px;
         }
 
+        .badge.badge-outline {
+            background-color: transparent;
+            border: 1px solid;
+            color:#7c808d;
+        }
+
         .label-primary .badge {
-            color: #337ab7;
+            color: #3379b7;
         }
 
         .label-warning .badge {
@@ -212,6 +222,15 @@
 
 <div class="container">
     <div class="row clearfix">
+
+        <!-- <div class="alert alert-success alert-dismissible" role="alert">
+            <strong>Message:</strong> 
+            
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div> -->
+        
         <h2>G Cluster (10.15.89.43) (g01 ~ g30)</h2>
 
         {% for node_gpu_msg in node_gpu_msg_list %}
@@ -219,6 +238,7 @@
         <h4>{% raw node_gpu_msg['hostname'] %}
             <small>{% raw node_gpu_msg['query_time'] %}</small>
             (CPU:{% raw node_gpu_msg['cpu_msg'] %} MEM:{% raw node_gpu_msg['memory_msg'] %})
+            <span class="badge badge-outline"> usage weight: {%raw gpu_weight_dict[node_gpu_msg['gpus'][0]['name']] %} </span>
         </h4>
 
         <table class="table table-striped table-condensed">
@@ -265,7 +285,7 @@
                 <td>
                 {% for process in gpu_msg['processes'] %}
                     {%set usr = process['username'].split('-')[0] %}
-                    {%set usr_consumpt = usr_consumpt_dict[usr] %}
+                    {%set usr_consumpt = int(usr_consumpt_dict[usr]) %}
                     {% set timeout = ('天' in process['runtime'] and int(process['runtime'].split('天')[0]) > 10) %}
 
                     {% if usr_consumpt > 16 %}
@@ -286,7 +306,7 @@
                                 {%raw process['username'] %}
                             </span>
                             ({% raw int(process['gpu_memory_usage'] / gpu_msg['memory.total'] * 100)%}%) 
-                            <span class="badge badge">
+                            <span class="badge">
                                 {% raw usr_consumpt %}
                             </span></span>
                     </span>

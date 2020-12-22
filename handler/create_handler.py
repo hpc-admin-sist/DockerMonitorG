@@ -11,6 +11,7 @@ import time
 from email.mime.text import MIMEText
 from email.header import Header
 from datetime import datetime
+from config import mail_host, mail_user, mail_pass
 
 
 class CreateHandler(BaseHandler):
@@ -98,10 +99,6 @@ class CreateHandler(BaseHandler):
             return True
 
     def send_email_to_new_account(self, username, ch_username, receiver, login_port, assigned_port):
-        mail_host = "smtp.shanghaitech.edu.cn"  # 设置服务器
-        mail_user = "piaozhx@shanghaitech.edu.cn"  # 用户名
-        mail_pass = "yozN2JjhGMNVWDLDNYgGdGAo"  # 口令
-
         sender = 'piaozhx@shanghaitech.edu.cn'
         receivers = [receiver]  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
 

@@ -4,7 +4,6 @@
 # @Email   : piaozhx@shanghaitech.edu.cn
 
 from handler.base_handler import BaseHandler
-from config import WEBSITE_ACCOUNT_LIST
 
 
 class LoginHandler(BaseHandler):

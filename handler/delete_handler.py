@@ -40,7 +40,6 @@ class DeleteHandler(BaseHandler):
         self.close_all_container(username, uid)
 
         print(f'---- Removing user directory of "{username}" ----')
-        self.mv_to_trash_and_rm(f'/p300/g_cluster/user_dir/{username} ')
         self.mv_to_trash_and_rm(f'/public/g_cluster/user_dir/{username} ')
 
         # # print('rm -rf /p300/docker/%s' % username)

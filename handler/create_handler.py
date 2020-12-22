@@ -58,14 +58,9 @@ class CreateHandler(BaseHandler):
             self.write(ret_data)
 
     def create_user_docker_dir(self, cname, container_port, port_range_str, advisor):
-        user_dir_root = '/p300/g_cluster/user_dir/%s' % cname
         user_dir_system = '/public/g_cluster/user_dir/%s' % cname
         if os.path.exists(user_dir_system):
             print(f'!!!! User directory "{user_dir_system}" exists !!!!')
-            self.log += "User directory exists, please use another user name.\n"
-            return False
-        elif os.path.exists(user_dir_root):
-            print(f'!!!! User directory "{user_dir_root}" exists !!!!')
             self.log += "User directory exists, please use another user name.\n"
             return False
         else:
@@ -84,16 +79,12 @@ class CreateHandler(BaseHandler):
                 print("mv %s %s" % (prepare_dir, user_dir_system))
                 os.system("mv %s %s" % (prepare_dir, user_dir_system))
             
-            print("mkdir %s" % (user_dir_root))            
-            os.system("mkdir %s" % (user_dir_root))        
 
-            print("mv %s %s" % (os.path.join(user_dir_system, 'root'), os.path.join(user_dir_root, 'root')))
-            os.system("mv %s %s" % (os.path.join(user_dir_system, 'root'), os.path.join(user_dir_root, 'root')))
 
             # build ssh-key
-            os.system(f'ssh-keygen -q -N "" -f /p300/g_cluster/user_dir/{cname}/root/.ssh/id_rsa')
-            os.system("cat /p300/g_cluster/user_dir/%s/root/.ssh/id_rsa.pub >> /p300/g_cluster/user_dir/%s/root/.ssh/authorized_keys" % (cname, cname))
-            os.system('sed -i "s/user_port/%d/g" /p300/g_cluster/user_dir/%s/root/.ssh/config' % (container_port, cname))
+            os.system('ssh-keygen -q -N "" -f %s/root/.ssh/id_rsa' % user_dir_system)
+            os.system("cat %s/root/.ssh/id_rsa.pub >> %s/root/.ssh/authorized_keys" % (user_dir_system, user_dir_system))
+            os.system('sed -i "s/user_port/%d/g" %s/root/.ssh/config' % (container_port, user_dir_system))
 
             print('---- Creating user login container... ----')
             self.log += 'Creating user login container...'

@@ -15,8 +15,10 @@ class LoginHandler(BaseHandler):
         super_username = self.get_argument('name')
         pwd = self.get_argument('pwd')
 
-        for account in WEBSITE_ACCOUNT_LIST:
-            if super_username == account['username'] and pwd == account['passwd']:
+        suid = self.db.get_suid_by_username(super_username)
+        if suid is not None:
+            superuser_info = self.db.get_superuser_info_by_suid(suid)
+            if superuser_info['passwd'] == pwd:
                 self.set_secure_cookie("user", super_username)
                 self.write('yes')
                 return

@@ -22,6 +22,32 @@ class DatabaseManager:
         cursor = self.conn.cursor()
 
         return cursor
+    
+    def get_suid_by_username(self, username):
+        '''
+        superuser_id query
+        '''
+        cursor = self.get_cursor()
+        cursor.execute("select suid from docker.superuser where username = '%s'" % username)
+        suid = cursor.fetchone()
+        suid = suid[0] if suid else None
+
+        self.commit()
+        return suid
+    
+    def get_superuser_info_by_suid(self, suid):
+        cursor = self.get_cursor()
+        cursor.execute("select suid, username, passwd from docker.superuser where suid=%s" % suid)
+        superuser_info = cursor.fetchone()
+
+        superuser_info = {
+            'uid': superuser_info[0],
+            'username': superuser_info[1],
+            'passwd': superuser_info[2]
+        }
+
+        self.commit()
+        return superuser_info
 
     def get_all_user_info(self):
         cursor = self.get_cursor()

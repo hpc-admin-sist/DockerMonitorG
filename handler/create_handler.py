@@ -99,7 +99,7 @@ class CreateHandler(BaseHandler):
             return True
 
     def send_email_to_new_account(self, username, ch_username, receiver, login_port, assigned_port):
-        sender = 'piaozhx@shanghaitech.edu.cn'
+        sender = mail_user
         receivers = [receiver]  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
 
         mail_content = f'''
@@ -115,7 +115,7 @@ class CreateHandler(BaseHandler):
     2. 用户环境的以Docker为基础搭建。
     3. 操作系统为Ubuntu 18.04LTS，预装NVIDIA CUDA 10.2和PyTorch1.6。
     4. 用户对下列路径以外的文件改动不会被保留：/bin /etc /lib /lib64 /opt /sbin /usr /home /root。
-    5. 为便于数据管理，请将数据、代码、conda环境等用户文件存在/home下。其中，/home文件夹与AI集群同名用户的/p300文件夹共享。
+    5. 为便于数据管理，请将数据、代码、conda环境等用户文件存在/p300下。其中，/p300文件夹与AI集群同名用户的/p300文件夹共享。
 
     你的账户信息为：
         用户名： {username}

@@ -44,7 +44,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
         # memory_size = os.popen('''ssh %s  free -h | head -n 2 | tail -n 1 | awk -F' ' '{print $2}' ''' % node_name).read().strip()
         cmd = '''ssh %s  free -h | head -n 2 | tail -n 1 | awk -F' ' '{print $2}' ''' % node_name
-        memory_size = self.cmd_with_timeout(cmd, timeout=10)
+        memory_size = self.cmd_with_timeout(cmd, timeout=30)
         if memory_size is not None:
             memory_size = memory_size.strip()
         else:
@@ -114,7 +114,7 @@ class BaseHandler(tornado.web.RequestHandler):
               f"/usr/sbin/sshd -p {container_port} -D")
 
         # os.system(cmd)
-        r = self.cmd_with_timeout(cmd, timeout=10)
+        r = self.cmd_with_timeout(cmd, timeout=30)
         if r is not None:
             print(f'{container_name} created.') 
             return True
@@ -135,7 +135,7 @@ class BaseHandler(tornado.web.RequestHandler):
         # os.system(cmd)
 
         tic = time.time()
-        r = self.cmd_with_timeout(cmd, timeout=80)
+        r = self.cmd_with_timeout(cmd, timeout=100)
         toc = time.time()
         if r is not None:
             print('%s started in %.2f s.' % (container_name, toc-tic))
@@ -156,7 +156,7 @@ class BaseHandler(tornado.web.RequestHandler):
         container_name = '%s-%s' % (username, node_name)
         cmd = 'ssh %s docker stop %s && docker rm %s' % (node_name, container_name, container_name)
         # os.system(cmd)
-        r = self.cmd_with_timeout(cmd, timeout=10)
+        r = self.cmd_with_timeout(cmd, timeout=30)
         if r is not None:
             print(f'{container_name} removed')
             return True
@@ -165,7 +165,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
     
     @classmethod
-    def cmd_with_timeout(self, cmd, timeout=10):
+    def cmd_with_timeout(self, cmd, timeout=30):
         p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
         try:
             p.wait(timeout)
